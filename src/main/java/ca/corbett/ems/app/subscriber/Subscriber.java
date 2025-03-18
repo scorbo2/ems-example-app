@@ -2,6 +2,7 @@ package ca.corbett.ems.app.subscriber;
 
 import ca.corbett.ems.client.EMSClient;
 import ca.corbett.ems.client.EMSServerResponse;
+import ca.corbett.ems.server.EMSServer;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -199,6 +200,9 @@ public class Subscriber extends EMSClient {
         if (!isConnected) {
             return false;
         }
+
+        // Stupid special case: strip out delimiters if there are any:
+        message = message.replaceAll(EMSServer.DELIMITER, " ");
 
         EMSServerResponse response = sendCommand("SEND", channel, message);
         if (!isConnected || response.isError()) {

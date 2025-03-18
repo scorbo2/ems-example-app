@@ -11,6 +11,10 @@ import java.util.logging.Logger;
 import static ca.corbett.ems.server.EMSServer.DELIMITER;
 
 /**
+ * Sends a message to a named channel. All subscribers to that channel will receive the message,
+ * except for the client that sends it. It is not an error condition if the named channel does
+ * not exist or has no subscribers - in any case, the command will return an ok response.
+ *
  * @author scorbo2
  * @since 2023-11-24
  */
@@ -62,5 +66,4 @@ public class SendHandler extends AbstractCommandHandler {
     public String getUsageText() {
         return name + DELIMITER + "<channel>" + DELIMITER + "<message>";
     }
-
 }

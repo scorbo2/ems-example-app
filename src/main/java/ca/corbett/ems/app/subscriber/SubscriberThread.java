@@ -75,11 +75,13 @@ class SubscriberThread extends Thread {
 
                 owner.fireMessageReceivedEvent(channel, message);
             }
-        } catch (IOException | InterruptedException ignored) {
+        } catch (IOException ioe) {
+            logger.log(Level.SEVERE, "Caught exception in subscriber loop", ioe);
+        } catch (InterruptedException ignored) {
+            // This is normal when sending to own channel - thread gets killed then restarted to avoid sending to self
         }
 
         isRunning = false;
-        System.out.println("Subscriber thread has ended.");
     }
 
     public boolean isRunning() {

@@ -9,14 +9,41 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * Contains some static utility method for managing command line parameters.
+ * The EMS example app can either run headless (console output only) or with a GUI,
+ * depending on what command line arguments are given. Here is the output
+ * from the -h (help) option:
+ * <blockquote>
+ *     <pre>
+ *  usage: java -jar EMS.jar [options]
+ *  -C,--channel <channel>   Used with --startSubscriber, this is the channel to
+ *                           subscribe to.
+ *  -H,--host <host>         Host to connect to (default localhost)
+ *  -h,--help                Show usage information and exit.
+ *  -P,--port <port>         Port to use for connections (default 1975)
+ *     --startClient         Starts an EMS client
+ *     --startGui            Starts a graphical interface
+ *     --startServer         Start an EMS server
+ *     --startSubscriber     Starts a subscriber (requires --channel)
+ *  -v,--version             Show version and exit.
+ *  -y,--serverSpy           Optional with --startServer, outputs more log info.
+ *
+ * Exactly one of the --start* options is required.
+ *     </pre>
+ * </blockquote>
  *
  * @author scorbo2
  * @since 2023-11-24
  */
 public final class CLI {
 
+    /**
+     * If not specified, our default hostname is "localhost".
+     */
     public static final String DEFAULT_HOSTNAME = "localhost";
+
+    /**
+     * If not specified, our default listening port is 1975.
+     */
     public static final int DEFAULT_LISTENING_PORT = 1975;
 
     /**
@@ -72,6 +99,11 @@ public final class CLI {
                 .desc("Starts a subscriber (requires --channel)")
                 .build());
 
+        options.addOption(Option.builder()
+                .longOpt("startGui")
+                .desc("Starts a graphical interface")
+                .build());
+
         options.addOption(Option.builder("C")
                 .longOpt("channel")
                 .hasArg()
@@ -95,7 +127,7 @@ public final class CLI {
      */
     public static void showUsageText(Options options, boolean exit) {
         final HelpFormatter helpFormatter = new HelpFormatter();
-        String note = "\nOne of --startServer, --startClient, or --startSubscriber is required.\nIf no args are given, a UI will be presented.";
+        String note = "\nExactly one of the --start* options is required.";
         helpFormatter.printHelp(80, "java -jar EMS.jar [options]", "", options, note);
 
         if (exit) {
@@ -125,7 +157,7 @@ public final class CLI {
         try {
             return parser.parse(options, args);
         } catch (ParseException pe) {
-            System.out.println("ERROR: " + pe.getMessage());
+            System.err.println("ERROR: " + pe.getMessage());
             System.exit(1);
         }
 
@@ -141,5 +173,4 @@ public final class CLI {
     public static CommandLine generateCommandLine(String[] args) {
         return CLI.generateCommandLine(buildOptions(), args);
     }
-
 }

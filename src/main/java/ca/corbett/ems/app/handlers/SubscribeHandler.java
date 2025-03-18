@@ -7,7 +7,16 @@ import ca.corbett.ems.server.EMSServer;
 import static ca.corbett.ems.server.EMSServer.DELIMITER;
 
 /**
+ * Subscribes to the named channel. From that point on, the client issuing this command
+ * will receive notification when any message is sent to that channel. To stop receiving
+ * messages for that channel, the client can use the unsubscribe command.
+ * <p>
+ *     It is not an error condition if the named channel does not exist. An okay
+ *     response will be returned in any case.
+ * </p>
+ *
  * @author scorbo2
+ * @since 2023-11-24
  */
 public class SubscribeHandler extends AbstractCommandHandler {
 
@@ -44,5 +53,4 @@ public class SubscribeHandler extends AbstractCommandHandler {
     public String getUsageText() {
         return name + DELIMITER + "<channel>";
     }
-
 }

@@ -7,7 +7,16 @@ import ca.corbett.ems.server.EMSServer;
 import static ca.corbett.ems.server.EMSServer.DELIMITER;
 
 /**
+ * Unsubscribes from the named channel. The client issuing this command will no longer
+ * receive messages destined for that channel.
+ * <p>
+ *     It is not an error condition if the named channel does not exist or
+ *     if the client wasn't previously subscribed to that channel. In any
+ *     case, this command will return an ok response.
+ * </p>
+ *
  * @author scorbo2
+ * @since 2023-11-24
  */
 public class UnsubscribeHandler extends AbstractCommandHandler {
 

@@ -6,7 +6,7 @@ import ca.corbett.ems.server.EMSServer;
 import java.time.Duration;
 
 /**
- * A simple handler to report how long the server has been up.
+ * Reports how long the server has been up.
  *
  * @author scorbo2
  * @since 2023-11-24

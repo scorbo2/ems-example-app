@@ -5,7 +5,7 @@ import ca.corbett.ems.handlers.AbstractCommandHandler;
 import ca.corbett.ems.server.EMSServer;
 
 /**
- * A simple command handler to return server information.
+ * A simple command handler to return server version information.
  *
  * @author scorbo2
  * @since 2023-11-24

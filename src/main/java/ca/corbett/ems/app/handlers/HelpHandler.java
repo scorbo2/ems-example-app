@@ -9,7 +9,7 @@ import static ca.corbett.ems.server.EMSServer.DELIMITER;
 import static ca.corbett.ems.server.EMSServer.UNRECOGNIZED_COMMAND;
 
 /**
- * A simple handler to list available commands along with their help usage.
+ * Lists all commands registered on this EMS server along with their help usage text.
  *
  * @author scorbo2
  * @since 2023-11-24
@@ -69,5 +69,4 @@ public class HelpHandler extends AbstractCommandHandler {
     public String getUsageText() {
         return name + "[" + DELIMITER + "<command>]";
     }
-
 }
