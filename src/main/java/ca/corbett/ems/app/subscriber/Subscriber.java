@@ -6,6 +6,7 @@ import ca.corbett.ems.server.EMSServer;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +45,9 @@ public class Subscriber extends EMSClient {
 
     @Override
     public EMSServerResponse sendCommand(String command, String... params) {
-        // If we're currently listening, stop for a moment:
+        // If we're currently listening, stop for a moment.
+        // This prevents us from interpreting the response to this command
+        // as an inbound message on our listening thread.
         boolean wasListening = (listenerThread != null);
         if (wasListening) {
             killListenerThread();
@@ -211,6 +214,33 @@ public class Subscriber extends EMSClient {
         }
 
         return isConnected;
+    }
+
+    /**
+     * Returns a list of channels on the server that are available to be subscribed
+     * to. The special channel ALL is not included here as it is implied.
+     *
+     * @return A List of channel names on the server. Might be empty.
+     */
+    public List<String> getActiveChannels() {
+        List<String> channels = new ArrayList<>();
+        if (!isConnected) {
+            return channels;
+        }
+
+        EMSServerResponse response = sendCommand("LIST_ACTIVE");
+        if (!isConnected || response.isError()) {
+            logger.log(Level.SEVERE, "Failed to gather channel list from server... aborting.");
+            disconnect();
+        } else {
+            String responseMsg = response.getMessage().trim();
+            if (responseMsg.isBlank()) {
+                return channels;
+            }
+            Collections.addAll(channels, responseMsg.split("\n"));
+        }
+
+        return channels;
     }
 
     void fireMessageReceivedEvent(String channel, String message) {

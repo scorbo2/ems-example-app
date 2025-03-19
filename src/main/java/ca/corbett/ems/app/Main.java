@@ -12,6 +12,7 @@ import ca.corbett.ems.app.handlers.UptimeHandler;
 import ca.corbett.ems.app.subscriber.Subscriber;
 import ca.corbett.ems.app.subscriber.SubscriberEvent;
 import ca.corbett.ems.app.subscriber.SubscriberListener;
+import ca.corbett.ems.app.ui.MainWindow;
 import ca.corbett.ems.client.EMSClient;
 import ca.corbett.ems.client.EMSServerResponse;
 import ca.corbett.ems.server.EMSServer;
@@ -85,7 +86,7 @@ public class Main {
 
         // Start up the GUI if requested:
         if (startGui) {
-            System.err.println("Here's where I'd show a ui... IF I HAD ONE (TODO write one)");
+            MainWindow.getInstance().setVisible(true);
             return;
         }
 

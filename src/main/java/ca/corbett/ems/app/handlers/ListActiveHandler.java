@@ -44,7 +44,7 @@ public class ListActiveHandler extends AbstractCommandHandler {
     public String handle(EMSServer server, String clientId, String commandLine) {
         List<String> channels = ChannelManager.getInstance().getActiveChannels();
         if (channels.isEmpty()) {
-            return "No channels found.\n" + createOkResponse();
+            return createOkResponse();
         }
 
         StringBuilder sb = new StringBuilder();
