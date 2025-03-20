@@ -28,18 +28,19 @@ import java.util.logging.Logger;
  * provide convenience methods to make it easy to start up a local
  * EMS server and connect to it, or to connect to a remote EMS server.
  * <p>
- *     <br>Connecting to a local server:</b><br>
+ *     <b>Connecting to a local server:</b>
+ * </p>
  *     <pre>
  *         connectionManager.startLocalServer("localhost", 1975);
  *         connectionManager.connect("localhost", 1975);
  *     </pre>
- * </p>
  * <p>
- *     <b></b>Connecting to a remote server:</b><br>
+ *     <b>Connecting to a remote server:</b>
+ * </p>
  *     <pre>
  *         connectionManager.connect("10.0.0.75", 1975);
  *     </pre>
- * </p>
+ *
  * <p>
  *     Either way, once you are connected, you can invoke any of the server-based
  *     methods, like retrieveChannelList or sendMessage, and
