@@ -58,8 +58,14 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
         textArea.setText("");
     }
 
+    /**
+     * Adds a line of text to the server console, and automatically appends a
+     * newline character.
+     *
+     * @param text Text to be added to the console.
+     */
     public void appendToConsole(String text) {
-        textArea.append(text + "\n");
+        textArea.append(text + System.lineSeparator());
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
@@ -99,7 +105,10 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
                 if (sourceField.getSelectedIndex() == 0) {
                     appendToConsole("Starting local EMS server...");
                     AboutHandler.getInstance().setServerName(nameField.getText());
-                    ConnectionManager.getInstance().startLocalServer(hostField.getText(), (Integer) portField.getCurrentValue());
+                    if (!ConnectionManager.getInstance().startLocalServer(hostField.getText(), (Integer) portField.getCurrentValue())) {
+                        //appendToConsole("Local server failed to start."); // already logged by ConnectionManager
+                        return;
+                    }
                 }
                 appendToConsole("Attempting to connect...");
                 SwingUtilities.invokeLater(new Runnable() {
@@ -141,7 +150,12 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
         textArea.setBackground(Color.BLACK);
         textArea.setEditable(false);
         textArea.setRows(8);
-        textArea.setText(Version.FULL_NAME + "\n" + Version.PROJECT_URL + "\n" + "Ready.\n");
+        textArea.setText(Version.FULL_NAME +
+                System.lineSeparator() +
+                Version.PROJECT_URL +
+                System.lineSeparator() +
+                "Ready" +
+                System.lineSeparator());
         scrollPane.getVerticalScrollBar().setUnitIncrement(32);
         scrollPane.getVerticalScrollBar().setBlockIncrement(64);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -163,7 +177,7 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
 
     @Override
     public void localServerStopped() {
-        appendToConsole("Local server shut down.\n");
+        appendToConsole("Local server shut down." + System.lineSeparator());
     }
 
     @Override
@@ -186,7 +200,7 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
 
     @Override
     public void channelMessageReceived(String channel, String message) {
-
+        //ignored
     }
 
     @Override
@@ -196,9 +210,11 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
 
     @Override
     public void channelSubscribed(String channelName) {
+        //ignored
     }
 
     @Override
     public void channelUnsubscribed(String channelName) {
+        //ignored
     }
 }

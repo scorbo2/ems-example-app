@@ -24,13 +24,24 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Provides a JPanel containing controls for listing the available channels on an EMS
+ * server and for subscribing to them. You can also send messages to one or more
+ * channels from this panel. A notification text area is also presented here so that
+ * when a message arrives on any of the channels that we are subscribed to, it
+ * can be displayed (with an optional audible signal if selected).
+ *
+ * @author scorbo2
+ * @since 2025-03-19
+ */
 public final class SubscriptionsPanel extends JPanel implements ConnectionListener {
 
-    private static Logger logger = Logger.getLogger(SubscriptionsPanel.class.getName());
+    private static final Logger logger = Logger.getLogger(SubscriptionsPanel.class.getName());
 
     private MessageUtil messageUtil;
     private LabelField statusLabel;
@@ -49,13 +60,18 @@ public final class SubscriptionsPanel extends JPanel implements ConnectionListen
     private final int[][] audibleAlert;
 
     public SubscriptionsPanel() {
+        // Try to load the audible signal from resources:
         int[][] audio = null;
         try {
-            audio = AudioUtil.parseAudioStream(new BufferedInputStream(getClass().getResourceAsStream("/ems-example-app/sfx_bell_ding.wav")));
+            InputStream in = getClass().getResourceAsStream("/ems-example-app/sfx_bell_ding.wav");
+            if (in != null) {
+                audio = AudioUtil.parseAudioStream(new BufferedInputStream(in));
+            }
         } catch (IOException | UnsupportedAudioFileException e) {
             logger.warning("Unable to load audible alert: " + e.getMessage());
         }
         audibleAlert = audio;
+
         setLayout(new BorderLayout());
         add(buildControlPanel(), BorderLayout.NORTH);
         add(buildAlertsPanel(), BorderLayout.CENTER);
@@ -64,7 +80,7 @@ public final class SubscriptionsPanel extends JPanel implements ConnectionListen
     }
 
     public void appendToConsole(String text) {
-        notificationsArea.append(text + "\n");
+        notificationsArea.append(text + System.lineSeparator());
         notificationsArea.setCaretPosition(notificationsArea.getDocument().getLength());
     }
 
@@ -183,6 +199,12 @@ public final class SubscriptionsPanel extends JPanel implements ConnectionListen
         return panel;
     }
 
+    /**
+     * We can enable or disable the GUI controls here depending on whether
+     * or not we are connected to an EMS server.
+     *
+     * @param enable Whether to enable or disable the controls.
+     */
     private void enableControls(boolean enable) {
         btnCreate.setEnabled(enable);
         btnSubscribe.setEnabled(enable);

@@ -10,6 +10,12 @@ import static ca.corbett.ems.server.EMSServer.UNRECOGNIZED_COMMAND;
 
 /**
  * Lists all commands registered on this EMS server along with their help usage text.
+ * Optional parameter: the name of the command to receive help for.
+ * If no parameters: will list all registered commands and their help text.
+ * <p>
+ *     Example: HELP:UNSUBSCRIBE<br>
+ *     Returns the help text for the UNSUBSCRIBE command.
+ * </p>
  *
  * @author scorbo2
  * @since 2023-11-24

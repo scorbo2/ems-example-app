@@ -47,6 +47,12 @@ public final class MainWindow extends JFrame implements ConnectionListener {
         return instance;
     }
 
+    /**
+     * Updates the status bar at the bottom of the window with some
+     * short informational text.
+     *
+     * @param text Any text to display in the status bar at the bottom.
+     */
     public void setStatusText(String text) {
         statusBar.setStatus(text);
     }
@@ -65,6 +71,11 @@ public final class MainWindow extends JFrame implements ConnectionListener {
         add(statusBar, BorderLayout.SOUTH);
     }
 
+    /**
+     * INTRO - provides a quick overview of the example app.
+     *
+     * @return The intro panel.
+     */
     private JPanel buildIntroPanel() {
         FormPanel formPanel = new FormPanel();
 
@@ -97,6 +108,11 @@ public final class MainWindow extends JFrame implements ConnectionListener {
         return formPanel;
     }
 
+    /**
+     * ABOUT - returns a panel with information about the app itself.
+     *
+     * @return We actually return an AboutPanel here.
+     */
     private JPanel buildAboutPanel() {
         return new AboutPanel(Version.aboutInfo);
     }
@@ -110,10 +126,12 @@ public final class MainWindow extends JFrame implements ConnectionListener {
 
     @Override
     public void localServerStarted(String host, int port) {
+        //ignored
     }
 
     @Override
     public void localServerStopped() {
+        //ignored
     }
 
     @Override
@@ -128,21 +146,26 @@ public final class MainWindow extends JFrame implements ConnectionListener {
 
     @Override
     public void connectionError(String errorMessage) {
+        //ignored
     }
 
     @Override
     public void channelMessageReceived(String channel, String message) {
+        //ignored
     }
 
     @Override
     public void channelList(List<String> activeChannels, List<String> subscribedChannels) {
+        //ignored
     }
 
     @Override
     public void channelSubscribed(String channelName) {
+        //ignored
     }
 
     @Override
     public void channelUnsubscribed(String channelName) {
+        //ignored
     }
 }

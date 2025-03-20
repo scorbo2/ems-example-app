@@ -21,6 +21,13 @@ class SubscriberThread extends Thread {
     private final BufferedReader in;
     private volatile boolean isRunning;
 
+    /**
+     * Created as needed by Subscriber to manage a connection to an EMS server. You should
+     * generally never need to instantiate this.
+     *
+     * @param owner The Subscriber that owns this thread.
+     * @param in    The BufferedReader from which to read our input.
+     */
     public SubscriberThread(Subscriber owner, BufferedReader in) {
         this.owner = owner;
         this.in = in;

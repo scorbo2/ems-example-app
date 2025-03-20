@@ -14,6 +14,12 @@ import static ca.corbett.ems.server.EMSServer.DELIMITER;
  * Sends a message to a named channel. All subscribers to that channel will receive the message,
  * except for the client that sends it. It is not an error condition if the named channel does
  * not exist or has no subscribers - in any case, the command will return an ok response.
+ * <p>
+ *     <b>Super broadcasting</b><br>
+ *     There's a special channel named "ALL" that all clients are automatically subscribed
+ *     to and from which they can't unsubscribe. Sending a message to this channel
+ *     will therefore notify all clients.
+ * </p>
  *
  * @author scorbo2
  * @since 2023-11-24

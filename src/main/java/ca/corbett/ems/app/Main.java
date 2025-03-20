@@ -67,7 +67,7 @@ public class Main {
             return;
         }
 
-        // Otherwise, we need one of startServer, startClient, or startSubscriber:
+        // Otherwise, we need one of startServer, startClient, startSubscriber, or startGui:
         boolean startServer = cmdLine.hasOption("startServer");
         boolean startClient = cmdLine.hasOption("startClient");
         boolean startSubscriber = cmdLine.hasOption("startSubscriber");
@@ -99,6 +99,8 @@ public class Main {
                 CLI.showUsageText(true);
             }
         }
+
+        // EMS servers can optionally be assigned a human-readable name:
         if (cmdLine.hasOption("serverName")) {
             AboutHandler.getInstance().setServerName(cmdLine.getOptionValue("serverName"));
         }

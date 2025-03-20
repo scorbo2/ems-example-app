@@ -18,6 +18,12 @@ import java.util.logging.Logger;
  * stop monitoring this class for subscription events. Use the subscribe() and unsubscribe()
  * methods to start or stop listening to specific channels. (Note that you can also
  * specify the channels as an optional parameter list when you invoked connect()).
+ * </p>
+ * <p>
+ *     Note that in the Gui, this class is wrapped by ConnectionManager, and the entire
+ *     gui goes through that manager class instead. The command line client in Main shows
+ *     an example of using this class directly.
+ * </p>
  *
  * @author scorbo2
  * @since 2023-11-24

@@ -19,6 +19,12 @@ public class AboutHandler extends AbstractCommandHandler {
         super("about");
     }
 
+    /**
+     * This class is singleton to allow dynamically changing the server
+     * name - see setServerName.
+     *
+     * @return The single instance of this command handler.
+     */
     public static AboutHandler getInstance() {
         if (instance == null) {
             instance = new AboutHandler();
@@ -26,6 +32,13 @@ public class AboutHandler extends AbstractCommandHandler {
         return instance;
     }
 
+    /**
+     * Set an optional name for this server. This will be returned when clients
+     * query this ABOUT command. The default is the full name and version
+     * of this application as specified in the Version class.
+     *
+     * @param name The new human-readable name for this server.
+     */
     public void setServerName(String name) {
         serverName = (name == null || name.isBlank()) ? Version.FULL_NAME : name;
     }
