@@ -12,13 +12,27 @@ import ca.corbett.ems.server.EMSServer;
  */
 public class AboutHandler extends AbstractCommandHandler {
 
-    public AboutHandler() {
+    private static AboutHandler instance;
+    private static String serverName = Version.FULL_NAME;
+
+    private AboutHandler() {
         super("about");
+    }
+
+    public static AboutHandler getInstance() {
+        if (instance == null) {
+            instance = new AboutHandler();
+        }
+        return instance;
+    }
+
+    public void setServerName(String name) {
+        serverName = (name == null || name.isBlank()) ? Version.FULL_NAME : name;
     }
 
     @Override
     public String handle(EMSServer server, String clientId, String commandLine) {
-        return createOkResponse(Version.FULL_NAME);
+        return createOkResponse(serverName);
     }
 
     @Override

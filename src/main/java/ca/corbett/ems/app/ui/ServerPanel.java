@@ -1,12 +1,15 @@
 package ca.corbett.ems.app.ui;
 
 import ca.corbett.ems.app.Version;
+import ca.corbett.ems.app.handlers.AboutHandler;
+import ca.corbett.extras.MessageUtil;
 import ca.corbett.forms.FormPanel;
 import ca.corbett.forms.fields.ComboField;
 import ca.corbett.forms.fields.NumberField;
 import ca.corbett.forms.fields.PanelField;
 import ca.corbett.forms.fields.TextField;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,15 +24,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A JPanel that contains controls for starting a local EMS server or for
  * connecting to a remote one. Also contains a server output console
  * for visibility as to what's going on within the server.
+ *
+ * @author scorbo2
+ * @since 2025-03-18
  */
-public final class ServerPanel extends JPanel {
+public final class ServerPanel extends JPanel implements ConnectionListener {
 
+    private static final Logger logger = Logger.getLogger(ServerPanel.class.getName());
+
+    public static final String DISCONNECTED = "Not connected.";
+
+    private MessageUtil messageUtil;
     private ComboField sourceField;
+    private TextField nameField;
     private TextField hostField;
     private NumberField portField;
     private JTextArea textArea;
@@ -38,6 +51,7 @@ public final class ServerPanel extends JPanel {
         setLayout(new BorderLayout());
         add(buildControlPanel(), BorderLayout.NORTH);
         add(buildConsole(), BorderLayout.CENTER);
+        ConnectionManager.getInstance().addConnectionListener(this);
     }
 
     public void clearConsole() {
@@ -56,7 +70,17 @@ public final class ServerPanel extends JPanel {
         options.add("Start a local EMS server");
         options.add("Connect to a remote EMS server");
         sourceField = new ComboField("Source:", options, 0, false);
+        sourceField.addValueChangedAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nameField.setEnabled(sourceField.getSelectedIndex() == 0);
+            }
+        });
         formPanel.addFormField(sourceField);
+
+        nameField = new TextField("Name:", 15, 1, true);
+        nameField.setText(Version.FULL_NAME);
+        formPanel.addFormField(nameField);
 
         hostField = new TextField("Host:", 15, 1, true);
         hostField.setText("localhost");
@@ -74,7 +98,8 @@ public final class ServerPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (sourceField.getSelectedIndex() == 0) {
                     appendToConsole("Starting local EMS server...");
-                    MainWindow.getInstance().startLocalServer(hostField.getText(), (Integer) portField.getCurrentValue());
+                    AboutHandler.getInstance().setServerName(nameField.getText());
+                    ConnectionManager.getInstance().startLocalServer(hostField.getText(), (Integer) portField.getCurrentValue());
                 }
                 appendToConsole("Attempting to connect...");
                 SwingUtilities.invokeLater(new Runnable() {
@@ -84,7 +109,7 @@ public final class ServerPanel extends JPanel {
                             Thread.sleep(75); // give it a chance to start up
                         } catch (InterruptedException ignored) {
                         }
-                        MainWindow.getInstance().connect(hostField.getText(), (Integer) portField.getCurrentValue());
+                        ConnectionManager.getInstance().connect(hostField.getText(), (Integer) portField.getCurrentValue());
                     }
                 });
             }
@@ -95,7 +120,7 @@ public final class ServerPanel extends JPanel {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainWindow.getInstance().disconnect();
+                ConnectionManager.getInstance().disconnect();
             }
         });
         panelField.getPanel().add(btn);
@@ -122,5 +147,58 @@ public final class ServerPanel extends JPanel {
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
+    }
+
+    private MessageUtil getMessageUtil() {
+        if (messageUtil == null) {
+            messageUtil = new MessageUtil(MainWindow.getInstance(), logger);
+        }
+        return messageUtil;
+    }
+
+    @Override
+    public void localServerStarted(String host, int port) {
+        appendToConsole("Started local EMS server on port " + port);
+    }
+
+    @Override
+    public void localServerStopped() {
+        appendToConsole("Local server shut down.\n");
+    }
+
+    @Override
+    public void connected(String host, int port, String serverVersion, String clientId) {
+        appendToConsole("Connected to " + host + ":" + port);
+        appendToConsole("Server version is: " + serverVersion);
+        appendToConsole("Connected as client " + clientId);
+    }
+
+    @Override
+    public void disconnected() {
+        appendToConsole("Disconnected.");
+    }
+
+    @Override
+    public void connectionError(String errorMessage) {
+        appendToConsole(errorMessage);
+        getMessageUtil().error(errorMessage);
+    }
+
+    @Override
+    public void channelMessageReceived(String channel, String message) {
+
+    }
+
+    @Override
+    public void channelList(List<String> activeChannels, List<String> subscribedChannels) {
+        appendToConsole("Found " + activeChannels.size() + " channels on this server.");
+    }
+
+    @Override
+    public void channelSubscribed(String channelName) {
+    }
+
+    @Override
+    public void channelUnsubscribed(String channelName) {
     }
 }

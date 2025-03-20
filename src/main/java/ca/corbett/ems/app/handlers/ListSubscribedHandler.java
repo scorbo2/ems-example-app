@@ -44,7 +44,7 @@ public class ListSubscribedHandler extends AbstractCommandHandler {
     public String handle(EMSServer server, String clientId, String commandLine) {
         List<String> channels = ChannelManager.getInstance().getSubscribedChannels(clientId);
         if (channels.isEmpty()) {
-            return "No subscriptions found.\n" + createOkResponse();
+            return createOkResponse();
         }
 
         StringBuilder sb = new StringBuilder();

@@ -15,17 +15,17 @@ import org.apache.commons.cli.ParseException;
  * <blockquote>
  *     <pre>
  *  usage: java -jar EMS.jar [options]
- *  -C,--channel <channel>   Used with --startSubscriber, this is the channel to
- *                           subscribe to.
- *  -H,--host <host>         Host to connect to (default localhost)
- *  -h,--help                Show usage information and exit.
- *  -P,--port <port>         Port to use for connections (default 1975)
- *     --startClient         Starts an EMS client
- *     --startGui            Starts a graphical interface
- *     --startServer         Start an EMS server
- *     --startSubscriber     Starts a subscriber (requires --channel)
- *  -v,--version             Show version and exit.
- *  -y,--serverSpy           Optional with --startServer, outputs more log info.
+ * -C,--channel &lt;channel&gt;         Used with --startSubscriber, this is the channel to subscribe to.
+ * -H,--host &lt;host&gt;               Host to connect to (default localhost)
+ * -h,--help                      Show usage information and exit.
+ * -N,--serverName &lt;serverName&gt;   Used with --startServer, provides an optional name for this server.
+ * -P,--port &lt;port&gt;               Port to use for connections (default 1975)
+ * --startClient                  Starts an EMS client
+ * --startGui                     Starts a graphical interface
+ * --startServer                  Start an EMS server
+ * --startSubscriber              Starts a subscriber (requires --channel)
+ * -v,--version                   Show version and exit.
+ * -y,--serverSpy                 Optional with --startServer, outputs more log info.
  *
  * Exactly one of the --start* options is required.
  *     </pre>
@@ -114,6 +114,13 @@ public final class CLI {
         options.addOption(Option.builder("y")
                 .longOpt("serverSpy")
                 .desc("Optional with --startServer, outputs more log info.")
+                .build());
+
+        options.addOption(Option.builder("N")
+                .longOpt("serverName")
+                .hasArg()
+                .argName("serverName")
+                .desc("Used with --startServer, provides an optional name for this server.")
                 .build());
 
         return options;

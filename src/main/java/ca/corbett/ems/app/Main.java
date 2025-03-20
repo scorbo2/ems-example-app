@@ -99,6 +99,9 @@ public class Main {
                 CLI.showUsageText(true);
             }
         }
+        if (cmdLine.hasOption("serverName")) {
+            AboutHandler.getInstance().setServerName(cmdLine.getOptionValue("serverName"));
+        }
 
         // Host and port if specified:
         String host = cmdLine.hasOption("host") ? cmdLine.getOptionValue("host") : CLI.DEFAULT_HOSTNAME;
@@ -143,7 +146,7 @@ public class Main {
 
         // Register all our command handlers:
         EMSServer server = new EMSServer(host, port);
-        server.registerCommandHandler(new AboutHandler());
+        server.registerCommandHandler(AboutHandler.getInstance());
         server.registerCommandHandler(new HelpHandler());
         server.registerCommandHandler(new SendHandler());
         server.registerCommandHandler(new ListActiveHandler());
@@ -324,7 +327,7 @@ public class Main {
 
         // Otherwise, load the built-in config:
         try {
-            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/logging.properties"));
+            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/ems-example-app/logging.properties"));
         } catch (IOException ioe) {
             System.out.println("WARN: Unable to load log configuration: " + ioe.getMessage());
         }

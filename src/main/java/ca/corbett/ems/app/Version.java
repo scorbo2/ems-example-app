@@ -20,5 +20,6 @@ public final class Version {
         aboutInfo.projectUrl = PROJECT_URL;
         aboutInfo.license = LICENSE;
         aboutInfo.copyright = COPYRIGHT;
+        aboutInfo.releaseNotesLocation = "/ems-example-app/release_notes.txt";
     }
 }

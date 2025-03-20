@@ -1,0 +1,5 @@
+EMS Example App v1.0.0
+
+v1.0.0 [2025-03-21]
+- Initial release
+- based on code from old sc-util Nov 2023

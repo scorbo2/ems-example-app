@@ -6,7 +6,6 @@ import ca.corbett.ems.server.EMSServer;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -80,18 +79,11 @@ public class Subscriber extends EMSClient {
             return false;
         }
 
-        // Get our client id:
-        EMSServerResponse response = sendCommand("WHO");
-        if (!isConnected || response.isError()) {
-            logger.log(Level.SEVERE, "Subscriber unable to execute WHO... aborting.");
-            disconnect();
-            return false;
-        }
-
         // Make sure the server supports SUBSCRIBE and UNSUBSCRIBE commands:
-        EMSServerResponse response1 = sendCommand("HELP:SUBSCRIBE");
-        EMSServerResponse response2 = sendCommand("HELP:UNSUBSCRIBE");
-        if (response1.isError() || response2.isError()) {
+        EMSServerResponse response = sendCommand("HELP");
+        if (response.isError() ||
+                !response.getMessage().toUpperCase().contains("SUBSCRIBE") ||
+                !response.getMessage().toUpperCase().contains("UNSUBSCRIBE")) {
             logger.log(Level.SEVERE, "Subscriber: this server does not support SUBSCRIBE/UNSUBSCRIBE.");
             disconnect();
             return false;
@@ -214,33 +206,6 @@ public class Subscriber extends EMSClient {
         }
 
         return isConnected;
-    }
-
-    /**
-     * Returns a list of channels on the server that are available to be subscribed
-     * to. The special channel ALL is not included here as it is implied.
-     *
-     * @return A List of channel names on the server. Might be empty.
-     */
-    public List<String> getActiveChannels() {
-        List<String> channels = new ArrayList<>();
-        if (!isConnected) {
-            return channels;
-        }
-
-        EMSServerResponse response = sendCommand("LIST_ACTIVE");
-        if (!isConnected || response.isError()) {
-            logger.log(Level.SEVERE, "Failed to gather channel list from server... aborting.");
-            disconnect();
-        } else {
-            String responseMsg = response.getMessage().trim();
-            if (responseMsg.isBlank()) {
-                return channels;
-            }
-            Collections.addAll(channels, responseMsg.split("\n"));
-        }
-
-        return channels;
     }
 
     void fireMessageReceivedEvent(String channel, String message) {
