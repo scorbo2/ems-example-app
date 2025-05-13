@@ -1,20 +1,14 @@
 package ca.corbett.ems.app;
 
-import ca.corbett.ems.app.handlers.AboutHandler;
 import ca.corbett.ems.app.handlers.HaltHandler;
-import ca.corbett.ems.app.handlers.HelpHandler;
-import ca.corbett.ems.app.handlers.ListActiveHandler;
-import ca.corbett.ems.app.handlers.ListSubscribedHandler;
-import ca.corbett.ems.app.handlers.SendHandler;
-import ca.corbett.ems.app.handlers.SubscribeHandler;
-import ca.corbett.ems.app.handlers.UnsubscribeHandler;
 import ca.corbett.ems.app.handlers.UptimeHandler;
-import ca.corbett.ems.app.subscriber.Subscriber;
-import ca.corbett.ems.app.subscriber.SubscriberEvent;
-import ca.corbett.ems.app.subscriber.SubscriberListener;
 import ca.corbett.ems.app.ui.MainWindow;
 import ca.corbett.ems.client.EMSClient;
 import ca.corbett.ems.client.EMSServerResponse;
+import ca.corbett.ems.client.channel.Subscriber;
+import ca.corbett.ems.client.channel.SubscriberEvent;
+import ca.corbett.ems.client.channel.SubscriberListener;
+import ca.corbett.ems.handlers.VersionHandler;
 import ca.corbett.ems.server.EMSServer;
 import ca.corbett.ems.server.EMSServerSpy;
 import org.apache.commons.cli.CommandLine;
@@ -102,7 +96,7 @@ public class Main {
 
         // EMS servers can optionally be assigned a human-readable name:
         if (cmdLine.hasOption("serverName")) {
-            AboutHandler.getInstance().setServerName(cmdLine.getOptionValue("serverName"));
+            VersionHandler.getInstance().setServerName(cmdLine.getOptionValue("serverName"));
         }
 
         // Host and port if specified:
@@ -148,13 +142,6 @@ public class Main {
 
         // Register all our command handlers:
         EMSServer server = new EMSServer(host, port);
-        server.registerCommandHandler(AboutHandler.getInstance());
-        server.registerCommandHandler(new HelpHandler());
-        server.registerCommandHandler(new SendHandler());
-        server.registerCommandHandler(new ListActiveHandler());
-        server.registerCommandHandler(new ListSubscribedHandler());
-        server.registerCommandHandler(new SubscribeHandler());
-        server.registerCommandHandler(new UnsubscribeHandler());
         server.registerCommandHandler(new HaltHandler());
         server.registerCommandHandler(new UptimeHandler());
 
@@ -171,6 +158,14 @@ public class Main {
                 @Override
                 public void messageSent(EMSServer server, String clientId, String rawMessage) {
                     logger.log(Level.INFO, "Spy: sending \"{0}\" to {1}", new Object[]{rawMessage, clientId});
+                }
+
+                @Override
+                public void clientConnected(EMSServer server, String clientId) {
+                }
+
+                @Override
+                public void clientDisconnected(EMSServer server, String clientId) {
                 }
             });
         }

@@ -1,17 +1,10 @@
 package ca.corbett.ems.app.ui;
 
-import ca.corbett.ems.app.handlers.AboutHandler;
-import ca.corbett.ems.app.handlers.HelpHandler;
-import ca.corbett.ems.app.handlers.ListActiveHandler;
-import ca.corbett.ems.app.handlers.ListSubscribedHandler;
-import ca.corbett.ems.app.handlers.SendHandler;
-import ca.corbett.ems.app.handlers.SubscribeHandler;
-import ca.corbett.ems.app.handlers.UnsubscribeHandler;
 import ca.corbett.ems.app.handlers.UptimeHandler;
-import ca.corbett.ems.app.subscriber.Subscriber;
-import ca.corbett.ems.app.subscriber.SubscriberEvent;
-import ca.corbett.ems.app.subscriber.SubscriberListener;
 import ca.corbett.ems.client.EMSServerResponse;
+import ca.corbett.ems.client.channel.Subscriber;
+import ca.corbett.ems.client.channel.SubscriberEvent;
+import ca.corbett.ems.client.channel.SubscriberListener;
 import ca.corbett.ems.server.EMSServer;
 
 import java.util.ArrayList;
@@ -115,13 +108,6 @@ public final class ConnectionManager {
     public boolean startLocalServer(String host, int port) {
         stopLocalServer();
         localServer = new EMSServer(host, port);
-        localServer.registerCommandHandler(AboutHandler.getInstance());
-        localServer.registerCommandHandler(new HelpHandler());
-        localServer.registerCommandHandler(new SendHandler());
-        localServer.registerCommandHandler(new ListActiveHandler());
-        localServer.registerCommandHandler(new ListSubscribedHandler());
-        localServer.registerCommandHandler(new SubscribeHandler());
-        localServer.registerCommandHandler(new UnsubscribeHandler());
         //localServer.registerCommandHandler(new HaltHandler()); // nah
         localServer.registerCommandHandler(new UptimeHandler());
         localServer.startServer(); // we could spy on it for extra logging, but it'll get noisy
@@ -403,7 +389,7 @@ public final class ConnectionManager {
         if (!isConnected()) {
             return null;
         }
-        EMSServerResponse response = client.sendCommand("about");
+        EMSServerResponse response = client.sendCommand("version");
         if (response.isSuccess()) {
             return response.getMessage();
         } else {
