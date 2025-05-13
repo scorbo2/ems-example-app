@@ -1,7 +1,7 @@
 package ca.corbett.ems.app.ui;
 
 import ca.corbett.ems.app.Version;
-import ca.corbett.ems.app.handlers.AboutHandler;
+import ca.corbett.ems.handlers.VersionHandler;
 import ca.corbett.extras.MessageUtil;
 import ca.corbett.forms.FormPanel;
 import ca.corbett.forms.fields.ComboField;
@@ -104,7 +104,7 @@ public final class ServerPanel extends JPanel implements ConnectionListener {
             public void actionPerformed(ActionEvent e) {
                 if (sourceField.getSelectedIndex() == 0) {
                     appendToConsole("Starting local EMS server...");
-                    AboutHandler.getInstance().setServerName(nameField.getText());
+                    VersionHandler.getInstance().setServerName(nameField.getText());
                     if (!ConnectionManager.getInstance().startLocalServer(hostField.getText(), (Integer) portField.getCurrentValue())) {
                         //appendToConsole("Local server failed to start."); // already logged by ConnectionManager
                         return;

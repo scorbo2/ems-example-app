@@ -1,18 +1,13 @@
 package ca.corbett.ems.app.ui;
 
-import ca.corbett.ems.app.handlers.AboutHandler;
-import ca.corbett.ems.app.handlers.HelpHandler;
-import ca.corbett.ems.app.handlers.ListActiveHandler;
-import ca.corbett.ems.app.handlers.ListSubscribedHandler;
-import ca.corbett.ems.app.handlers.SendHandler;
-import ca.corbett.ems.app.handlers.SubscribeHandler;
-import ca.corbett.ems.app.handlers.UnsubscribeHandler;
 import ca.corbett.ems.app.handlers.UptimeHandler;
-import ca.corbett.ems.app.subscriber.Subscriber;
-import ca.corbett.ems.app.subscriber.SubscriberEvent;
-import ca.corbett.ems.app.subscriber.SubscriberListener;
 import ca.corbett.ems.client.EMSServerResponse;
+import ca.corbett.ems.client.channel.Subscriber;
+import ca.corbett.ems.client.channel.SubscriberEvent;
+import ca.corbett.ems.client.channel.SubscriberListener;
+import ca.corbett.ems.server.ChannelManager;
 import ca.corbett.ems.server.EMSServer;
+import ca.corbett.ems.server.EMSServerSpy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,16 +110,10 @@ public final class ConnectionManager {
     public boolean startLocalServer(String host, int port) {
         stopLocalServer();
         localServer = new EMSServer(host, port);
-        localServer.registerCommandHandler(AboutHandler.getInstance());
-        localServer.registerCommandHandler(new HelpHandler());
-        localServer.registerCommandHandler(new SendHandler());
-        localServer.registerCommandHandler(new ListActiveHandler());
-        localServer.registerCommandHandler(new ListSubscribedHandler());
-        localServer.registerCommandHandler(new SubscribeHandler());
-        localServer.registerCommandHandler(new UnsubscribeHandler());
         //localServer.registerCommandHandler(new HaltHandler()); // nah
         localServer.registerCommandHandler(new UptimeHandler());
         localServer.startServer(); // we could spy on it for extra logging, but it'll get noisy
+        localServer.addServerSpy(new UnsubscribeSpy());
         try {
             Thread.sleep(100); // give it a chance to start up
         } catch (InterruptedException ignored) {
@@ -403,7 +392,7 @@ public final class ConnectionManager {
         if (!isConnected()) {
             return null;
         }
-        EMSServerResponse response = client.sendCommand("about");
+        EMSServerResponse response = client.sendCommand("version");
         if (response.isSuccess()) {
             return response.getMessage();
         } else {
@@ -480,6 +469,26 @@ public final class ConnectionManager {
     private void fireChannelUnsubscribedEvent(String channelName) {
         for (ConnectionListener listener : listeners) {
             listener.channelUnsubscribed(channelName);
+        }
+    }
+
+    private static class UnsubscribeSpy implements EMSServerSpy {
+
+        @Override
+        public void messageReceived(EMSServer server, String clientId, String rawMessage) {
+        }
+
+        @Override
+        public void messageSent(EMSServer server, String clientId, String rawMessage) {
+        }
+
+        @Override
+        public void clientConnected(EMSServer server, String clientId) {
+        }
+
+        @Override
+        public void clientDisconnected(EMSServer server, String clientId) {
+            ChannelManager.getInstance().unsubscribeFromAll(clientId);
         }
     }
 }

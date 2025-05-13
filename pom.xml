@@ -6,7 +6,7 @@
 
     <groupId>ca.corbett</groupId>
     <artifactId>ems-example-app</artifactId>
-    <version>1.0-0</version>
+    <version>1.1.0</version>
 
     <name>ems-example-app</name>
     <description>EMS Example App - a demonstration of EMS server and client</description>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>ca.corbett</groupId>
             <artifactId>ems</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>ca.corbett</groupId>
