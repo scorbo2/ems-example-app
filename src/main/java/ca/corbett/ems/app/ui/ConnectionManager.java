@@ -5,7 +5,9 @@ import ca.corbett.ems.client.EMSServerResponse;
 import ca.corbett.ems.client.channel.Subscriber;
 import ca.corbett.ems.client.channel.SubscriberEvent;
 import ca.corbett.ems.client.channel.SubscriberListener;
+import ca.corbett.ems.server.ChannelManager;
 import ca.corbett.ems.server.EMSServer;
+import ca.corbett.ems.server.EMSServerSpy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -111,6 +113,7 @@ public final class ConnectionManager {
         //localServer.registerCommandHandler(new HaltHandler()); // nah
         localServer.registerCommandHandler(new UptimeHandler());
         localServer.startServer(); // we could spy on it for extra logging, but it'll get noisy
+        localServer.addServerSpy(new UnsubscribeSpy());
         try {
             Thread.sleep(100); // give it a chance to start up
         } catch (InterruptedException ignored) {
@@ -466,6 +469,26 @@ public final class ConnectionManager {
     private void fireChannelUnsubscribedEvent(String channelName) {
         for (ConnectionListener listener : listeners) {
             listener.channelUnsubscribed(channelName);
+        }
+    }
+
+    private static class UnsubscribeSpy implements EMSServerSpy {
+
+        @Override
+        public void messageReceived(EMSServer server, String clientId, String rawMessage) {
+        }
+
+        @Override
+        public void messageSent(EMSServer server, String clientId, String rawMessage) {
+        }
+
+        @Override
+        public void clientConnected(EMSServer server, String clientId) {
+        }
+
+        @Override
+        public void clientDisconnected(EMSServer server, String clientId) {
+            ChannelManager.getInstance().unsubscribeFromAll(clientId);
         }
     }
 }
